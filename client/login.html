@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheckList - Login</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Lordicon -->
+    <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            /* Gradient emerald green */
+            background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+        <div class="p-8 text-center bg-emerald-50">
+            <lord-icon
+                src="https://cdn.lordicon.com/dxjqoygy.json"
+                trigger="loop"
+                colors="primary:#059669,secondary:#10b981"
+                style="width:80px;height:80px">
+            </lord-icon>
+            <h1 class="text-3xl font-bold text-gray-800 mt-4">CheckList</h1>
+            <p class="text-gray-500 mt-2">Inventory Management System</p>
+        </div>
+
+        <div class="p-8">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Welcome Back</h2>
+
+            <div id="alertMessage" class="hidden mb-4 p-3 rounded text-sm text-center"></div>
+
+            <form id="loginForm" class="space-y-5">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-envelope text-gray-400"></i>
+                        </div>
+                        <input type="email" id="email" name="email" required
+                            class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                            placeholder="you@example.com">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-lock text-gray-400"></i>
+                        </div>
+                        <input type="password" id="password" name="password" required
+                            class="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                            placeholder="••••••••">
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer" onclick="togglePassword('password', 'eyeIcon')">
+                            <i id="eyeIcon" class="fa-solid fa-eye text-gray-400 hover:text-emerald-600 transition-colors"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mt-4">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="remember" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded">
+                        <label for="remember" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                    </div>
+                    <a href="#" class="text-sm font-medium text-emerald-600 hover:text-emerald-500">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-lg transition-colors shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 flex justify-center items-center">
+                    <span id="btnText">Sign In</span>
+                    <i id="btnSpinner" class="fa-solid fa-spinner fa-spin hidden ml-2"></i>
+                </button>
+            </form>
+
+            <p class="mt-6 text-center text-sm text-gray-600">
+                Don't have an account?
+                <a href="register.html" class="font-medium text-emerald-600 hover:text-emerald-500 transition-colors">Register here</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+</body>
+</html>
