@@ -1,0 +1,24 @@
+
+> server@1.0.0 start
+> node server.js
+
+◇ injected env (6) from .env // tip: ⌘ suppress logs { quiet: true }
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+Server is running on port 5000
+Error creating product: Error: Cannot add or update a child row: a foreign key constraint fails (`checklist`.`products`, CONSTRAINT `products_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`))
+    at exports.createProduct (/app/server/controllers/productController.js:23:18)
+    at Layer.handleRequest (/app/server/node_modules/router/lib/layer.js:152:17)
+    at next (/app/server/node_modules/router/lib/route.js:157:13)
+    at Route.dispatch (/app/server/node_modules/router/lib/route.js:117:3)
+    at handle (/app/server/node_modules/router/index.js:435:11)
+    at Layer.handleRequest (/app/server/node_modules/router/lib/layer.js:152:17)
+    at /app/server/node_modules/router/index.js:295:15
+    at processParams (/app/server/node_modules/router/index.js:582:12)
+    at next (/app/server/node_modules/router/index.js:291:5)
+    at Function.handle (/app/server/node_modules/router/index.js:186:3) {
+  code: 'ER_NO_REFERENCED_ROW_2',
+  errno: 1452,
+  sqlState: '23000',
+  sqlMessage: 'Cannot add or update a child row: a foreign key constraint fails (`checklist`.`products`, CONSTRAINT `products_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`))',
+  sql: 'INSERT INTO products (name, sku, category_id, description, image) VALUES (?, ?, ?, ?, ?)'
+}
