@@ -38,7 +38,7 @@ const modalTitle = document.getElementById('modalTitle');
 const deleteModal = document.getElementById('deleteModal');
 
 // Image upload state
-let currentImageBase64 = null;
+let currentImageFile = null;
 const imageInput = document.getElementById('itemImage');
 const imagePreview = document.getElementById('imagePreview');
 const imagePlaceholder = document.getElementById('imagePlaceholder');
@@ -46,10 +46,10 @@ const imagePlaceholder = document.getElementById('imagePlaceholder');
 imageInput.addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (file) {
+        currentImageFile = file;
         const reader = new FileReader();
         reader.onload = function(event) {
-            currentImageBase64 = event.target.result;
-            imagePreview.src = currentImageBase64;
+            imagePreview.src = event.target.result;
             imagePreview.classList.remove('hidden');
             imagePlaceholder.classList.add('hidden');
         };
@@ -83,7 +83,7 @@ function openModal(itemStr = null) {
     modal.classList.remove('hidden');
 
     // Reset image
-    currentImageBase64 = null;
+    currentImageFile = null;
     imageInput.value = '';
     imagePreview.classList.add('hidden');
     imagePreview.src = '';
@@ -99,8 +99,7 @@ function openModal(itemStr = null) {
 
         // Show image if exists
         if (item.image) {
-            currentImageBase64 = item.image;
-            imagePreview.src = item.image;
+            imagePreview.src = `http://localhost:5000${item.image}`;
             imagePreview.classList.remove('hidden');
             imagePlaceholder.classList.add('hidden');
         }
@@ -171,7 +170,7 @@ function renderTable() {
     tbody.innerHTML = itemsList.map(item => {
         const itemStr = encodeURIComponent(JSON.stringify(item));
         const imageHtml = item.image
-            ? `<img src="${item.image}" class="h-10 w-10 rounded-full object-cover">`
+            ? `<img src="http://localhost:5000${item.image}" class="h-10 w-10 rounded-full object-cover">`
             : `<div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center"><i class="fa-solid fa-box text-gray-400"></i></div>`;
 
         return `
@@ -213,16 +212,15 @@ form.addEventListener('submit', async (e) => {
     const id = document.getElementById('itemId').value;
     const catVal = document.getElementById('itemCategory').value;
 
-    const payload = {
-        name: document.getElementById('itemName').value,
-        sku: document.getElementById('itemSku').value,
-        category_id: catVal ? parseInt(catVal, 10) : null,
-        description: document.getElementById('itemDesc').value
-    };
+    const formData = new FormData();
+    formData.append('name', document.getElementById('itemName').value);
+    formData.append('sku', document.getElementById('itemSku').value);
+    if (catVal) formData.append('category_id', catVal);
+    formData.append('description', document.getElementById('itemDesc').value);
 
-    // Append image if exists
-    if (currentImageBase64) {
-        payload.image = currentImageBase64;
+    // Append image file if selected
+    if (currentImageFile) {
+        formData.append('image', currentImageFile);
     }
 
     const method = id ? 'PUT' : 'POST';
@@ -232,10 +230,9 @@ form.addEventListener('submit', async (e) => {
         const response = await fetch(url, {
             method,
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify(payload)
+            body: formData
         });
 
         const data = await response.json();

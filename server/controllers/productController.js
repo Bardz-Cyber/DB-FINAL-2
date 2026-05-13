@@ -16,13 +16,15 @@ exports.getAllProducts = async (req, res) => {
 
 exports.createProduct = async (req, res) => {
     try {
-        const { name, sku, category_id, description, image } = req.body;
+        const { name, sku, category_id, description } = req.body;
+        const image = req.file ? `/uploads/${req.file.filename}` : null;
+
         if (!name || !sku) {
             return res.status(400).json({ error: 'Name and SKU are required' });
         }
         await db.execute(
             'INSERT INTO products (name, sku, category_id, description, image) VALUES (?, ?, ?, ?, ?)',
-            [name, sku, category_id || null, description || null, image || null]
+            [name, sku, category_id || null, description || null, image]
         );
         res.status(201).json({ message: 'Product created successfully' });
     } catch (error) {
@@ -34,14 +36,15 @@ exports.createProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, sku, category_id, description, image } = req.body;
+        const { name, sku, category_id, description } = req.body;
 
         if (!name || !sku) {
             return res.status(400).json({ error: 'Name and SKU are required' });
         }
 
-        // If an image was passed, update it. Otherwise leave the existing image.
-        if (image !== undefined) {
+        // If a new image was uploaded, update it. Otherwise leave the existing image.
+        if (req.file) {
+             const image = `/uploads/${req.file.filename}`;
              await db.execute(
                 'UPDATE products SET name = ?, sku = ?, category_id = ?, description = ?, image = ? WHERE id = ?',
                 [name, sku, category_id || null, description || null, image, id]
