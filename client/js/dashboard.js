@@ -66,6 +66,8 @@ async function fetchCategories() {
         categories = await response.json();
 
         const catSelect = document.getElementById('itemCategory');
+        catSelect.innerHTML = '<option value="">Select Category</option>';
+
         categories.forEach(cat => {
             const option = document.createElement('option');
             option.value = cat.id;
@@ -134,7 +136,16 @@ async function fetchItems() {
             return;
         }
 
-        itemsList = await response.json();
+        const data = await response.json();
+        if (Array.isArray(data)) {
+            itemsList = data;
+        } else {
+            console.error('Invalid response format for products:', data);
+            itemsList = [];
+            showAlert('Invalid response from server', 'error');
+            return;
+        }
+
         renderTable();
     } catch (error) {
         console.error('Error fetching products:', error);
@@ -149,7 +160,7 @@ function renderTable() {
 
     loading.classList.add('hidden');
 
-    if (itemsList.length === 0) {
+    if (!Array.isArray(itemsList) || itemsList.length === 0) {
         tbody.innerHTML = '';
         empty.classList.remove('hidden');
         return;
@@ -200,10 +211,12 @@ form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const id = document.getElementById('itemId').value;
+    const catVal = document.getElementById('itemCategory').value;
+
     const payload = {
         name: document.getElementById('itemName').value,
         sku: document.getElementById('itemSku').value,
-        category_id: document.getElementById('itemCategory').value || null,
+        category_id: catVal ? parseInt(catVal, 10) : null,
         description: document.getElementById('itemDesc').value
     };
 
