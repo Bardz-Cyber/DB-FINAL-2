@@ -71,6 +71,7 @@
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SKU</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                         <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
@@ -131,17 +132,28 @@
                                 <input type="text" id="itemName" required class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-800 focus:border-blue-800">
                             </div>
 
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-3 gap-4">
                                 <div>
                                     <label for="itemSku" class="block text-sm font-medium text-gray-700">SKU</label>
                                     <input type="text" id="itemSku" required class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-800 focus:border-blue-800" placeholder="e.g. LAP-001">
                                 </div>
 
                                 <div>
+                                    <label for="itemQuantity" class="block text-sm font-medium text-gray-700">Quantity</label>
+                                    <input type="number" id="itemQuantity" required min="0" value="0" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-800 focus:border-blue-800">
+                                </div>
+
+                                <div>
                                     <label for="itemCategory" class="block text-sm font-medium text-gray-700">Category</label>
                                     <select id="itemCategory" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-800 focus:border-blue-800">
                                         <option value="">Select Category</option>
-                                        <!-- Categories injected via JS -->
+                                        <!-- Categories are static -->
+                                        <option value="CCS Merch">CCS Merch</option>
+                                        <option value="Office Supplies">Office Supplies</option>
+                                        <option value="Electronics">Electronics</option>
+                                        <option value="Uniforms">Uniforms</option>
+                                        <option value="Books">Books</option>
+                                        <option value="Others">Others</option>
                                     </select>
                                 </div>
                             </div>

@@ -26,23 +26,16 @@ INSERT INTO users (admin_id, name, email, password_hash)
 VALUES ('260512', 'UC Admin', 'admin@uc.com', '$2b$10$tVSa6G7AjETBgJuQM1RAx.4TgnrJ0hIRDNHgnYEgZTh4I46c/1EoG');
 
 -- Create categories table
-CREATE TABLE IF NOT EXISTS categories (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE,
-    description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
 -- Create products table
 CREATE TABLE IF NOT EXISTS products (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     sku VARCHAR(100) NOT NULL UNIQUE,
-    category_id INT,
+    category VARCHAR(100),
     description TEXT,
+    quantity INT NOT NULL DEFAULT 0,
     image VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (category_id) REFERENCES categories(id)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create suppliers table

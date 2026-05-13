@@ -3,9 +3,8 @@ const db = require('../config/db');
 exports.getAllProducts = async (req, res) => {
     try {
         const [products] = await db.execute(`
-            SELECT p.id, p.name, p.sku, p.description, p.image, c.name as category_name
-            FROM products p
-            LEFT JOIN categories c ON p.category_id = c.id
+            SELECT id, name, sku, description, quantity, image, category
+            FROM products
         `);
         res.json(products);
     } catch (error) {
@@ -16,15 +15,15 @@ exports.getAllProducts = async (req, res) => {
 
 exports.createProduct = async (req, res) => {
     try {
-        const { name, sku, category_id, description } = req.body;
+        const { name, sku, category, description, quantity } = req.body;
         const image = req.file ? `/uploads/${req.file.filename}` : null;
 
         if (!name || !sku) {
             return res.status(400).json({ error: 'Name and SKU are required' });
         }
         await db.execute(
-            'INSERT INTO products (name, sku, category_id, description, image) VALUES (?, ?, ?, ?, ?)',
-            [name, sku, category_id || null, description || null, image]
+            'INSERT INTO products (name, sku, category, description, quantity, image) VALUES (?, ?, ?, ?, ?, ?)',
+            [name, sku, category || null, description || null, quantity || 0, image]
         );
         res.status(201).json({ message: 'Product created successfully' });
     } catch (error) {
@@ -36,7 +35,7 @@ exports.createProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, sku, category_id, description } = req.body;
+        const { name, sku, category, description, quantity } = req.body;
 
         if (!name || !sku) {
             return res.status(400).json({ error: 'Name and SKU are required' });
@@ -46,13 +45,13 @@ exports.updateProduct = async (req, res) => {
         if (req.file) {
              const image = `/uploads/${req.file.filename}`;
              await db.execute(
-                'UPDATE products SET name = ?, sku = ?, category_id = ?, description = ?, image = ? WHERE id = ?',
-                [name, sku, category_id || null, description || null, image, id]
+                'UPDATE products SET name = ?, sku = ?, category = ?, description = ?, quantity = ?, image = ? WHERE id = ?',
+                [name, sku, category || null, description || null, quantity || 0, image, id]
             );
         } else {
              await db.execute(
-                'UPDATE products SET name = ?, sku = ?, category_id = ?, description = ? WHERE id = ?',
-                [name, sku, category_id || null, description || null, id]
+                'UPDATE products SET name = ?, sku = ?, category = ?, description = ?, quantity = ? WHERE id = ?',
+                [name, sku, category || null, description || null, quantity || 0, id]
             );
         }
 

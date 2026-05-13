@@ -57,28 +57,6 @@ imageInput.addEventListener('change', function(e) {
     }
 });
 
-// Category state
-let categories = [];
-
-async function fetchCategories() {
-    try {
-        const response = await fetch(`${API_URL}/categories`);
-        categories = await response.json();
-
-        const catSelect = document.getElementById('itemCategory');
-        catSelect.innerHTML = '<option value="">Select Category</option>';
-
-        categories.forEach(cat => {
-            const option = document.createElement('option');
-            option.value = cat.id;
-            option.textContent = cat.name;
-            catSelect.appendChild(option);
-        });
-    } catch (error) {
-        console.error('Error fetching categories:', error);
-    }
-}
-
 function openModal(itemStr = null) {
     modal.classList.remove('hidden');
 
@@ -95,6 +73,7 @@ function openModal(itemStr = null) {
         document.getElementById('itemId').value = item.id;
         document.getElementById('itemName').value = item.name;
         document.getElementById('itemSku').value = item.sku;
+        document.getElementById('itemQuantity').value = item.quantity || 0;
         document.getElementById('itemDesc').value = item.description || '';
 
         // Show image if exists
@@ -104,13 +83,20 @@ function openModal(itemStr = null) {
             imagePlaceholder.classList.add('hidden');
         }
 
-        // Find category ID by name
-        const cat = categories.find(c => c.name === item.category_name);
-        document.getElementById('itemCategory').value = cat ? cat.id : '';
+        // Select matching category option
+        if (item.category) {
+            const select = document.getElementById('itemCategory');
+            Array.from(select.options).forEach(opt => {
+                 if (opt.value === item.category || opt.text === item.category) {
+                     select.value = opt.value;
+                 }
+            });
+        }
     } else {
         modalTitle.textContent = 'Add New Product';
         form.reset();
         document.getElementById('itemId').value = '';
+        document.getElementById('itemQuantity').value = 0;
     }
 }
 
@@ -186,8 +172,11 @@ function renderTable() {
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                    ${item.category_name || 'N/A'}
+                    ${item.category || 'N/A'}
                 </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                ${item.quantity || 0}
             </td>
             <td class="px-6 py-4 text-sm text-gray-500">
                 ${item.description || ''}
@@ -215,7 +204,8 @@ form.addEventListener('submit', async (e) => {
     const formData = new FormData();
     formData.append('name', document.getElementById('itemName').value);
     formData.append('sku', document.getElementById('itemSku').value);
-    if (catVal) formData.append('category_id', catVal);
+    formData.append('quantity', document.getElementById('itemQuantity').value);
+    if (catVal) formData.append('category', catVal);
     formData.append('description', document.getElementById('itemDesc').value);
 
     // Append image file if selected
@@ -291,4 +281,4 @@ document.getElementById('confirmDeleteBtn').addEventListener('click', async () =
 });
 
 // Initial Load
-fetchCategories().then(fetchItems);
+fetchItems();
