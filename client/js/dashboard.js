@@ -31,9 +31,31 @@ function showAlert(message, type = 'success') {
     }, 4000);
 }
 
+// Modals
 const modal = document.getElementById('itemModal');
 const form = document.getElementById('itemForm');
 const modalTitle = document.getElementById('modalTitle');
+const deleteModal = document.getElementById('deleteModal');
+
+// Image upload state
+let currentImageBase64 = null;
+const imageInput = document.getElementById('itemImage');
+const imagePreview = document.getElementById('imagePreview');
+const imagePlaceholder = document.getElementById('imagePlaceholder');
+
+imageInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            currentImageBase64 = event.target.result;
+            imagePreview.src = currentImageBase64;
+            imagePreview.classList.remove('hidden');
+            imagePlaceholder.classList.add('hidden');
+        };
+        reader.readAsDataURL(file);
+    }
+});
 
 // Category state
 let categories = [];
@@ -58,6 +80,13 @@ async function fetchCategories() {
 function openModal(itemStr = null) {
     modal.classList.remove('hidden');
 
+    // Reset image
+    currentImageBase64 = null;
+    imageInput.value = '';
+    imagePreview.classList.add('hidden');
+    imagePreview.src = '';
+    imagePlaceholder.classList.remove('hidden');
+
     if (itemStr) {
         const item = JSON.parse(decodeURIComponent(itemStr));
         modalTitle.textContent = 'Edit Product';
@@ -65,6 +94,14 @@ function openModal(itemStr = null) {
         document.getElementById('itemName').value = item.name;
         document.getElementById('itemSku').value = item.sku;
         document.getElementById('itemDesc').value = item.description || '';
+
+        // Show image if exists
+        if (item.image) {
+            currentImageBase64 = item.image;
+            imagePreview.src = item.image;
+            imagePreview.classList.remove('hidden');
+            imagePlaceholder.classList.add('hidden');
+        }
 
         // Find category ID by name
         const cat = categories.find(c => c.name === item.category_name);
@@ -122,8 +159,15 @@ function renderTable() {
 
     tbody.innerHTML = itemsList.map(item => {
         const itemStr = encodeURIComponent(JSON.stringify(item));
+        const imageHtml = item.image
+            ? `<img src="${item.image}" class="h-10 w-10 rounded-full object-cover">`
+            : `<div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center"><i class="fa-solid fa-box text-gray-400"></i></div>`;
+
         return `
         <tr class="hover:bg-gray-50 transition-colors">
+            <td class="px-6 py-4 whitespace-nowrap">
+                ${imageHtml}
+            </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                 ${item.sku}
             </td>
@@ -142,7 +186,7 @@ function renderTable() {
                 <button onclick="openModal('${itemStr}')" class="text-blue-600 hover:text-blue-900 mr-3" title="Edit">
                     <i class="fa-solid fa-pen"></i>
                 </button>
-                <button onclick="deleteItem(${item.id})" class="text-red-600 hover:text-red-900" title="Delete">
+                <button onclick="confirmDelete(${item.id})" class="text-red-600 hover:text-red-900" title="Delete">
                     <i class="fa-solid fa-trash"></i>
                 </button>
             </td>
@@ -162,6 +206,11 @@ form.addEventListener('submit', async (e) => {
         category_id: document.getElementById('itemCategory').value || null,
         description: document.getElementById('itemDesc').value
     };
+
+    // Append image if exists
+    if (currentImageBase64) {
+        payload.image = currentImageBase64;
+    }
 
     const method = id ? 'PUT' : 'POST';
     const url = id ? `${API_URL}/products/${id}` : `${API_URL}/products`;
@@ -191,12 +240,24 @@ form.addEventListener('submit', async (e) => {
     }
 });
 
-// Delete Item
-async function deleteItem(id) {
-    if (!confirm('Are you sure you want to delete this product?')) return;
+// Delete Logic
+let productToDeleteId = null;
+
+function confirmDelete(id) {
+    productToDeleteId = id;
+    deleteModal.classList.remove('hidden');
+}
+
+function closeDeleteModal() {
+    productToDeleteId = null;
+    deleteModal.classList.add('hidden');
+}
+
+document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+    if (!productToDeleteId) return;
 
     try {
-        const response = await fetch(`${API_URL}/products/${id}`, {
+        const response = await fetch(`${API_URL}/products/${productToDeleteId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -205,16 +266,19 @@ async function deleteItem(id) {
 
         if (response.ok) {
             showAlert('Product deleted successfully');
+            closeDeleteModal();
             fetchItems();
         } else {
             const data = await response.json();
             showAlert(data.error || 'Failed to delete product', 'error');
+            closeDeleteModal();
         }
     } catch (error) {
         console.error('Error deleting product:', error);
         showAlert('Failed to delete product', 'error');
+        closeDeleteModal();
     }
-}
+});
 
 // Initial Load
 fetchCategories().then(fetchItems);
