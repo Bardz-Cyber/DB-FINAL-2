@@ -9,7 +9,7 @@ if (!token || !userStr) {
 }
 
 const user = JSON.parse(userStr);
-document.getElementById('welcomeUser').textContent = `Hi, ${user.first_name}`;
+document.getElementById('welcomeUser').textContent = `Hi, ${user.name || user.first_name || 'Admin'}`;
 
 function logout() {
     localStorage.removeItem('checklist_token');
@@ -31,38 +31,13 @@ function showAlert(message, type = 'success') {
     }, 4000);
 }
 
-const modal = document.getElementById('itemModal');
-const form = document.getElementById('itemForm');
-const modalTitle = document.getElementById('modalTitle');
-
-function openModal(item = null) {
-    modal.classList.remove('hidden');
-
-    if (item) {
-        modalTitle.textContent = 'Edit Item';
-        document.getElementById('itemId').value = item.id;
-        document.getElementById('itemName').value = item.name;
-        document.getElementById('itemSku').value = item.sku;
-        document.getElementById('itemCategory').value = item.category;
-        document.getElementById('itemQty').value = item.quantity;
-    } else {
-        modalTitle.textContent = 'Add New Item';
-        form.reset();
-        document.getElementById('itemId').value = '';
-    }
-}
-
-function closeModal() {
-    modal.classList.add('hidden');
-    form.reset();
-}
 
 // Fetch and Render Items
 let itemsList = [];
 
 async function fetchItems() {
     try {
-        const response = await fetch(`${API_URL}/inventory`, {
+        const response = await fetch(`${API_URL}/products`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -105,89 +80,17 @@ function renderTable() {
                 ${item.name}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-100 text-emerald-800">
-                    ${item.category}
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                    ${item.category_name || 'N/A'}
                 </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-semibold ${item.quantity <= 5 ? 'text-red-600' : ''}">
-                ${item.quantity}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <button onclick='openModal(${JSON.stringify(item)})' class="text-blue-600 hover:text-blue-900 mr-3" title="Edit">
-                    <i class="fa-solid fa-pen"></i>
-                </button>
-                <button onclick="deleteItem(${item.id})" class="text-red-600 hover:text-red-900" title="Delete">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
+            <td class="px-6 py-4 text-sm text-gray-500">
+                ${item.description || ''}
             </td>
         </tr>
     `).join('');
 }
 
-// Form Submission (Add/Edit)
-form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const id = document.getElementById('itemId').value;
-    const payload = {
-        name: document.getElementById('itemName').value,
-        sku: document.getElementById('itemSku').value,
-        category: document.getElementById('itemCategory').value,
-        quantity: parseInt(document.getElementById('itemQty').value, 10)
-    };
-
-    const method = id ? 'PUT' : 'POST';
-    const url = id ? `${API_URL}/inventory/${id}` : `${API_URL}/inventory`;
-
-    try {
-        const response = await fetch(url, {
-            method,
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(payload)
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            showAlert(id ? 'Item updated successfully' : 'Item added successfully');
-            closeModal();
-            fetchItems();
-        } else {
-            showAlert(data.error || 'Operation failed', 'error');
-        }
-    } catch (error) {
-        console.error('Error saving item:', error);
-        showAlert('Failed to save item', 'error');
-    }
-});
-
-// Delete Item
-async function deleteItem(id) {
-    if (!confirm('Are you sure you want to delete this item?')) return;
-
-    try {
-        const response = await fetch(`${API_URL}/inventory/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        if (response.ok) {
-            showAlert('Item deleted successfully');
-            fetchItems();
-        } else {
-            const data = await response.json();
-            showAlert(data.error || 'Failed to delete item', 'error');
-        }
-    } catch (error) {
-        console.error('Error deleting item:', error);
-        showAlert('Failed to delete item', 'error');
-    }
-}
 
 // Initial Load
 fetchItems();

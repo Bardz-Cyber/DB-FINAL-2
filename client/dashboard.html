@@ -17,7 +17,14 @@
             background-color: #f3f4f6;
         }
         .header-gradient {
-            background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
+            background: #000080; /* UC Navy Blue */
+        }
+        .btn-blue {
+            background-color: #000080;
+            color: white;
+        }
+        .btn-blue:hover {
+            background-color: #000060;
         }
     </style>
 </head>
@@ -28,14 +35,14 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <div class="flex-shrink-0 flex items-center bg-white rounded-full p-2 h-10 w-10 justify-center">
-                        <i class="fa-solid fa-boxes-stacked text-emerald-600 text-xl"></i>
+                    <div class="flex-shrink-0 flex items-center bg-white rounded-full p-1 h-10 w-10 justify-center">
+                        <img src="assets/images/UC-logo.png" alt="UC Logo" class="h-8 w-auto">
                     </div>
                     <span class="ml-3 text-white text-xl font-bold">CheckList Inventory</span>
                 </div>
                 <div class="flex items-center">
                     <span id="welcomeUser" class="text-white mr-4 text-sm font-medium"></span>
-                    <button onclick="logout()" class="text-white hover:bg-emerald-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                    <button onclick="logout()" class="text-white hover:bg-blue-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                         <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
                     </button>
                 </div>
@@ -47,10 +54,7 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">Inventory Items</h2>
-            <button onclick="openModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg shadow transition-colors flex items-center">
-                <i class="fa-solid fa-plus mr-2"></i> Add Item
-            </button>
+            <h2 class="text-2xl font-bold text-gray-800">Products</h2>
         </div>
 
         <div id="alertMessage" class="hidden mb-4 p-4 rounded-lg text-sm text-center font-medium"></div>
@@ -63,8 +67,7 @@
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SKU</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
                     </tr>
                 </thead>
                 <tbody id="inventoryTableBody" class="bg-white divide-y divide-gray-200">
@@ -74,81 +77,18 @@
 
             <!-- Loading State -->
             <div id="tableLoading" class="text-center py-10">
-                <i class="fa-solid fa-spinner fa-spin text-3xl text-emerald-600"></i>
+                <i class="fa-solid fa-spinner fa-spin text-3xl text-blue-800"></i>
                 <p class="mt-2 text-gray-500">Loading inventory...</p>
             </div>
 
             <!-- Empty State -->
             <div id="tableEmpty" class="hidden text-center py-10">
                 <i class="fa-solid fa-box-open text-4xl text-gray-300 mb-3"></i>
-                <p class="text-gray-500">No items in inventory. Click "Add Item" to start.</p>
+                <p class="text-gray-500">No items in inventory.</p>
             </div>
         </div>
 
     </main>
-
-    <!-- Modal for Add/Edit -->
-    <div id="itemModal" class="fixed z-10 inset-0 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeModal()"></div>
-
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <form id="itemForm">
-                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                        <div class="mb-4 flex justify-between items-center border-b pb-3">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modalTitle">Add New Item</h3>
-                            <button type="button" class="text-gray-400 hover:text-gray-500" onclick="closeModal()">
-                                <i class="fa-solid fa-xmark text-xl"></i>
-                            </button>
-                        </div>
-
-                        <input type="hidden" id="itemId">
-
-                        <div class="space-y-4">
-                            <div>
-                                <label for="itemName" class="block text-sm font-medium text-gray-700">Item Name</label>
-                                <input type="text" id="itemName" required class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-emerald-500 focus:border-emerald-500">
-                            </div>
-
-                            <div>
-                                <label for="itemSku" class="block text-sm font-medium text-gray-700">SKU</label>
-                                <input type="text" id="itemSku" required class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-emerald-500 focus:border-emerald-500" placeholder="e.g. LAP-001">
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label for="itemCategory" class="block text-sm font-medium text-gray-700">Category</label>
-                                    <select id="itemCategory" required class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-emerald-500 focus:border-emerald-500">
-                                        <option value="">Select Category</option>
-                                        <option value="Electronics">Electronics</option>
-                                        <option value="Office Supplies">Office Supplies</option>
-                                        <option value="Furniture">Furniture</option>
-                                        <option value="Software">Software</option>
-                                        <option value="Other">Other</option>
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label for="itemQty" class="block text-sm font-medium text-gray-700">Quantity</label>
-                                    <input type="number" id="itemQty" min="0" required class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-emerald-500 focus:border-emerald-500">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t">
-                        <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-emerald-600 text-base font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
-                            Save Item
-                        </button>
-                        <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onclick="closeModal()">
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 
     <script src="js/dashboard.js"></script>
 </body>
