@@ -31,6 +31,55 @@ function showAlert(message, type = 'success') {
     }, 4000);
 }
 
+const modal = document.getElementById('itemModal');
+const form = document.getElementById('itemForm');
+const modalTitle = document.getElementById('modalTitle');
+
+// Category state
+let categories = [];
+
+async function fetchCategories() {
+    try {
+        const response = await fetch(`${API_URL}/categories`);
+        categories = await response.json();
+
+        const catSelect = document.getElementById('itemCategory');
+        categories.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat.id;
+            option.textContent = cat.name;
+            catSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+    }
+}
+
+function openModal(itemStr = null) {
+    modal.classList.remove('hidden');
+
+    if (itemStr) {
+        const item = JSON.parse(decodeURIComponent(itemStr));
+        modalTitle.textContent = 'Edit Product';
+        document.getElementById('itemId').value = item.id;
+        document.getElementById('itemName').value = item.name;
+        document.getElementById('itemSku').value = item.sku;
+        document.getElementById('itemDesc').value = item.description || '';
+
+        // Find category ID by name
+        const cat = categories.find(c => c.name === item.category_name);
+        document.getElementById('itemCategory').value = cat ? cat.id : '';
+    } else {
+        modalTitle.textContent = 'Add New Product';
+        form.reset();
+        document.getElementById('itemId').value = '';
+    }
+}
+
+function closeModal() {
+    modal.classList.add('hidden');
+    form.reset();
+}
 
 // Fetch and Render Items
 let itemsList = [];
@@ -51,8 +100,8 @@ async function fetchItems() {
         itemsList = await response.json();
         renderTable();
     } catch (error) {
-        console.error('Error fetching items:', error);
-        showAlert('Failed to load inventory', 'error');
+        console.error('Error fetching products:', error);
+        showAlert('Failed to load products', 'error');
     }
 }
 
@@ -71,7 +120,9 @@ function renderTable() {
 
     empty.classList.add('hidden');
 
-    tbody.innerHTML = itemsList.map(item => `
+    tbody.innerHTML = itemsList.map(item => {
+        const itemStr = encodeURIComponent(JSON.stringify(item));
+        return `
         <tr class="hover:bg-gray-50 transition-colors">
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                 ${item.sku}
@@ -87,10 +138,83 @@ function renderTable() {
             <td class="px-6 py-4 text-sm text-gray-500">
                 ${item.description || ''}
             </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <button onclick="openModal('${itemStr}')" class="text-blue-600 hover:text-blue-900 mr-3" title="Edit">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                <button onclick="deleteItem(${item.id})" class="text-red-600 hover:text-red-900" title="Delete">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </td>
         </tr>
-    `).join('');
+    `}).join('');
 }
 
 
+// Form Submission (Add/Edit)
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const id = document.getElementById('itemId').value;
+    const payload = {
+        name: document.getElementById('itemName').value,
+        sku: document.getElementById('itemSku').value,
+        category_id: document.getElementById('itemCategory').value || null,
+        description: document.getElementById('itemDesc').value
+    };
+
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `${API_URL}/products/${id}` : `${API_URL}/products`;
+
+    try {
+        const response = await fetch(url, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            showAlert(id ? 'Product updated successfully' : 'Product added successfully');
+            closeModal();
+            fetchItems();
+        } else {
+            showAlert(data.error || 'Operation failed', 'error');
+        }
+    } catch (error) {
+        console.error('Error saving product:', error);
+        showAlert('Failed to save product', 'error');
+    }
+});
+
+// Delete Item
+async function deleteItem(id) {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+
+    try {
+        const response = await fetch(`${API_URL}/products/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response.ok) {
+            showAlert('Product deleted successfully');
+            fetchItems();
+        } else {
+            const data = await response.json();
+            showAlert(data.error || 'Failed to delete product', 'error');
+        }
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        showAlert('Failed to delete product', 'error');
+    }
+}
+
 // Initial Load
-fetchItems();
+fetchCategories().then(fetchItems);

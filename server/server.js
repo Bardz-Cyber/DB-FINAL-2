@@ -8,6 +8,7 @@ const productRoutes = require('./routes/products');
 const stockRoutes = require('./routes/stock');
 const supplierRoutes = require('./routes/suppliers');
 const purchaseOrderRoutes = require('./routes/purchaseOrders');
+const categoryRoutes = require('./routes/categories');
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/stock', stockRoutes);
 app.use('/api/suppliers', supplierRoutes);
 app.use('/api/purchase-orders', purchaseOrderRoutes);
+app.use('/api/categories', categoryRoutes);
 
 // Basic health check route
 app.get('/', (req, res) => {

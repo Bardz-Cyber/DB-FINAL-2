@@ -30,3 +30,34 @@ exports.createProduct = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+exports.updateProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, sku, category_id, description } = req.body;
+
+        if (!name || !sku) {
+            return res.status(400).json({ error: 'Name and SKU are required' });
+        }
+
+        await db.execute(
+            'UPDATE products SET name = ?, sku = ?, category_id = ?, description = ? WHERE id = ?',
+            [name, sku, category_id || null, description || null, id]
+        );
+        res.json({ message: 'Product updated successfully' });
+    } catch (error) {
+        console.error('Error updating product:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+exports.deleteProduct = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await db.execute('DELETE FROM products WHERE id = ?', [id]);
+        res.json({ message: 'Product deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
