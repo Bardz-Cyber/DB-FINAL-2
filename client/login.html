@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CheckList - Login</title>
+    <title>CheckList - Admin Login</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
@@ -13,37 +13,42 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            /* Gradient emerald green */
-            background: linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%);
+            /* Navy blue background */
+            background-color: #000080;
+            background-image: url('assets/images/UC-Banner.jpg');
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: overlay;
             min-height: 100vh;
         }
     </style>
 </head>
 <body class="flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-        <div class="p-8 text-center bg-emerald-50">
-            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald-100 mb-2">
-                <i class="fa-solid fa-boxes-stacked text-4xl text-emerald-600"></i>
+        <div class="p-8 text-center bg-blue-50">
+            <div class="inline-flex items-center justify-center mb-2">
+                <img src="assets/images/UC-logo.png" alt="UC Logo" class="h-24 w-auto">
             </div>
             <h1 class="text-3xl font-bold text-gray-800 mt-2">CheckList</h1>
             <p class="text-gray-500 mt-2">Inventory Management System</p>
+            <p class="text-blue-800 font-semibold text-sm mt-1">Admin Portal</p>
         </div>
 
         <div class="p-8">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Welcome Back</h2>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Admin Sign In</h2>
 
             <div id="alertMessage" class="hidden mb-4 p-3 rounded text-sm text-center"></div>
 
             <form id="loginForm" class="space-y-5">
                 <div>
-                    <label for="student_id" class="block text-sm font-medium text-gray-700 mb-1">Student ID</label>
+                    <label for="admin_id" class="block text-sm font-medium text-gray-700 mb-1">Admin ID</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fa-solid fa-id-card text-gray-400"></i>
                         </div>
-                        <input type="text" id="student_id" name="student_id" required
-                            class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-                            placeholder="Ex: 2023-0001">
+                        <input type="text" id="admin_id" name="admin_id" required
+                            class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-800 focus:border-blue-800 transition-colors"
+                            placeholder="Admin ID">
                     </div>
                 </div>
 
@@ -54,21 +59,16 @@
                             <i class="fa-solid fa-lock text-gray-400"></i>
                         </div>
                         <input type="password" id="password" name="password" required
-                            class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                            class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-800 focus:border-blue-800 transition-colors"
                             placeholder="••••••••">
                     </div>
                 </div>
 
-                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-lg transition-colors shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 flex justify-center items-center mt-6">
+                <button type="submit" class="w-full bg-blue-800 hover:bg-blue-900 text-white font-semibold py-2.5 rounded-lg transition-colors shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-800 focus:ring-offset-2 flex justify-center items-center mt-6">
                     <span id="btnText">Sign In</span>
                     <i id="btnSpinner" class="fa-solid fa-spinner fa-spin hidden ml-2"></i>
                 </button>
             </form>
-
-            <p class="mt-6 text-center text-sm text-gray-600">
-                Don't have an account?
-                <a href="register.html" class="font-medium text-emerald-600 hover:text-emerald-500 transition-colors">Register here</a>
-            </p>
         </div>
     </div>
 

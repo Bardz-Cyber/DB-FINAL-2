@@ -1,55 +1,7 @@
-◇ injected env (6) from .env // tip: ⌘ override existing { override: true }
-◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+
+> server@1.0.0 start
+> node server.js
+
+◇ injected env (6) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
 ◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
 Server is running on port 5000
-Error in register: AggregateError:
-    at exports.register (/app/server/controllers/authController.js:14:42)
-    at Layer.handleRequest (/app/server/node_modules/router/lib/layer.js:152:17)
-    at next (/app/server/node_modules/router/lib/route.js:157:13)
-    at Route.dispatch (/app/server/node_modules/router/lib/route.js:117:3)
-    at handle (/app/server/node_modules/router/index.js:435:11)
-    at Layer.handleRequest (/app/server/node_modules/router/lib/layer.js:152:17)
-    at /app/server/node_modules/router/index.js:295:15
-    at processParams (/app/server/node_modules/router/index.js:582:12)
-    at next (/app/server/node_modules/router/index.js:291:5)
-    at Function.handle (/app/server/node_modules/router/index.js:186:3) {
-  code: 'ECONNREFUSED',
-  fatal: true,
-  [errors]: [
-    Error: connect ECONNREFUSED ::1:3306
-        at createConnectionError (node:net:1678:14)
-        at afterConnectMultiple (node:net:1708:16) {
-      errno: -111,
-      code: 'ECONNREFUSED',
-      syscall: 'connect',
-      address: '::1',
-      port: 3306
-    },
-    Error: connect ECONNREFUSED 127.0.0.1:3306
-        at createConnectionError (node:net:1678:14)
-        at afterConnectMultiple (node:net:1708:16) {
-      errno: -111,
-      code: 'ECONNREFUSED',
-      syscall: 'connect',
-      address: '127.0.0.1',
-      port: 3306
-    }
-  ]
-}
-Error in getItems: Error: Table 'checklist.items' doesn't exist
-    at exports.getItems (/app/server/controllers/inventoryController.js:6:34)
-    at Layer.handleRequest (/app/server/node_modules/router/lib/layer.js:152:17)
-    at next (/app/server/node_modules/router/lib/route.js:157:13)
-    at Route.dispatch (/app/server/node_modules/router/lib/route.js:117:3)
-    at handle (/app/server/node_modules/router/index.js:435:11)
-    at Layer.handleRequest (/app/server/node_modules/router/lib/layer.js:152:17)
-    at /app/server/node_modules/router/index.js:295:15
-    at processParams (/app/server/node_modules/router/index.js:582:12)
-    at next (/app/server/node_modules/router/index.js:291:5)
-    at module.exports (/app/server/middleware/authMiddleware.js:22:9) {
-  code: 'ER_NO_SUCH_TABLE',
-  errno: 1146,
-  sqlState: '42S02',
-  sqlMessage: "Table 'checklist.items' doesn't exist",
-  sql: 'SELECT * FROM items ORDER BY created_at DESC'
-}

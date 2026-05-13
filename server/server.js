@@ -1,8 +1,13 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+
+// Import routes
 const authRoutes = require('./routes/auth');
-const inventoryRoutes = require('./routes/inventory');
+const productRoutes = require('./routes/products');
+const stockRoutes = require('./routes/stock');
+const supplierRoutes = require('./routes/suppliers');
+const purchaseOrderRoutes = require('./routes/purchaseOrders');
 
 dotenv.config();
 
@@ -14,7 +19,10 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/inventory', inventoryRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/stock', stockRoutes);
+app.use('/api/suppliers', supplierRoutes);
+app.use('/api/purchase-orders', purchaseOrderRoutes);
 
 // Basic health check route
 app.get('/', (req, res) => {
