@@ -1,21 +1,5 @@
 const API_URL = 'http://localhost:5000/api/auth';
 
-// Utility: Toggle Password Visibility
-function togglePassword(inputId, iconId) {
-    const input = document.getElementById(inputId);
-    const icon = document.getElementById(iconId);
-
-    if (input.type === 'password') {
-        input.type = 'text';
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
-    } else {
-        input.type = 'password';
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
-    }
-}
-
 // Utility: Show Alert Message
 function showAlert(message, type) {
     const alertDiv = document.getElementById('alertMessage');
@@ -55,7 +39,7 @@ if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const email = document.getElementById('email').value;
+        const student_id = document.getElementById('student_id').value;
         const password = document.getElementById('password').value;
 
         setButtonLoading(true);
@@ -66,7 +50,7 @@ if (loginForm) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ student_id, password })
             });
 
             const data = await response.json();
@@ -79,9 +63,8 @@ if (loginForm) {
 
                 // Redirect after short delay
                 setTimeout(() => {
-                    alert('Redirecting to dashboard... (Dashboard not yet implemented)');
-                    // window.location.href = 'dashboard.html';
-                }, 1500);
+                    window.location.href = 'dashboard.html';
+                }, 1000);
             } else {
                 showAlert(data.error || 'Login failed', 'error');
             }

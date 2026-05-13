@@ -39,17 +39,17 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { student_id, password } = req.body;
 
-        if (!email || !password) {
-            return res.status(400).json({ error: 'Email and password are required' });
+        if (!student_id || !password) {
+            return res.status(400).json({ error: 'Student ID and password are required' });
         }
 
-        // Find user by email
-        const [users] = await db.execute('SELECT * FROM users WHERE email = ?', [email]);
+        // Find user by student_id
+        const [users] = await db.execute('SELECT * FROM users WHERE student_id = ?', [student_id]);
 
         if (users.length === 0) {
-            return res.status(401).json({ error: 'Invalid email or password' });
+            return res.status(401).json({ error: 'Invalid student ID or password' });
         }
 
         const user = users[0];
@@ -58,7 +58,7 @@ exports.login = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password_hash);
 
         if (!isMatch) {
-            return res.status(401).json({ error: 'Invalid email or password' });
+            return res.status(401).json({ error: 'Invalid student ID or password' });
         }
 
         // Generate JWT
