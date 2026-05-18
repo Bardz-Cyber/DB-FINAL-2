@@ -97,6 +97,11 @@ async function loadProducts() {
 
         if (response.ok) {
             allProducts = await response.json();
+
+            // Extract unique categories for dynamic filters
+            const categories = [...new Set(allProducts.map(p => p.category).filter(Boolean))];
+            renderCategoryFilters(categories);
+
             renderProducts(allProducts);
         } else {
             if(response.status === 401 || response.status === 403) logout();
@@ -163,13 +168,25 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
     renderProducts(filtered);
 });
 
-function filterCategory(category) {
+function renderCategoryFilters(categories) {
+    const container = document.getElementById('categoryFilters');
+    container.innerHTML = `<button class="px-4 py-1.5 rounded-full bg-blue-800 text-white text-sm font-medium whitespace-nowrap" onclick="filterCategory(event, '')">All</button>`;
+
+    categories.forEach(cat => {
+        container.innerHTML += `<button class="px-4 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 text-sm font-medium whitespace-nowrap" onclick="filterCategory(event, '${cat}')">${cat}</button>`;
+    });
+}
+
+function filterCategory(event, category) {
     // Update active button styling
     const buttons = document.getElementById('categoryFilters').children;
     for(let btn of buttons) {
         btn.className = "px-4 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 text-sm font-medium whitespace-nowrap";
     }
-    event.target.className = "px-4 py-1.5 rounded-full bg-blue-800 text-white text-sm font-medium whitespace-nowrap";
+
+    if(event && event.target) {
+        event.target.className = "px-4 py-1.5 rounded-full bg-blue-800 text-white text-sm font-medium whitespace-nowrap";
+    }
 
     if (!category) {
         renderProducts(allProducts);

@@ -17,6 +17,14 @@ function logout() {
     window.location.href = '../auth/login.html';
 }
 
+// Mobile Sidebar Toggle
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+}
+
 // Tab Switching logic
 function switchTab(tabId, navElement = null) {
     // Hide all tabs
@@ -39,6 +47,12 @@ function switchTab(tabId, navElement = null) {
     if (tabId === 'analytics') loadAnalytics();
     if (tabId === 'orders') fetchOrders();
     if (tabId === 'transactions') fetchTransactions();
+
+    // Close sidebar on mobile after clicking a tab
+    if (window.innerWidth < 768) {
+        document.getElementById('sidebar').classList.add('-translate-x-full');
+        document.getElementById('sidebarOverlay').classList.add('hidden');
+    }
 }
 
 // Chart Instance
@@ -195,23 +209,75 @@ function openOrderModal(orderStr) {
 
 function closeOrderModal() { document.getElementById('orderModal').classList.add('hidden'); }
 
-async function updateOrderStatus(orderId, status) {
-    if(!confirm(`Are you sure you want to mark this order as ${status}?`)) return;
-    try {
-        const res = await fetch(`${API_URL}/orders/${orderId}/status`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ status })
-        });
-        if(res.ok) {
-            showAlert(`Order ${status} successfully.`);
-            closeOrderModal();
-            fetchOrders();
-            loadAnalytics(); // Refresh analytics
-        } else throw new Error();
-    } catch(err) {
-        showAlert('Failed to update order status', 'error');
+// Custom Confirm Modal Logic
+let confirmActionCallback = null;
+
+function showConfirmModal(title, message, confirmColorClass, callback) {
+    document.getElementById('actionConfirmTitle').textContent = title;
+    document.getElementById('actionConfirmMsg').textContent = message;
+
+    const icon = document.getElementById('actionConfirmIcon');
+    const iconContainer = icon.parentElement;
+    const confirmBtn = document.getElementById('actionConfirmBtn');
+
+    // Reset classes
+    iconContainer.className = 'mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full sm:mx-0 sm:h-10 sm:w-10';
+    icon.className = 'fa-solid fa-circle-question text-xl';
+    confirmBtn.className = 'w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 text-base font-medium text-white sm:ml-3 sm:w-auto sm:text-sm';
+
+    if (confirmColorClass === 'green') {
+        iconContainer.classList.add('bg-green-100');
+        icon.classList.add('text-green-600', 'fa-check');
+        confirmBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+    } else if (confirmColorClass === 'red') {
+        iconContainer.classList.add('bg-red-100');
+        icon.classList.add('text-red-600', 'fa-triangle-exclamation');
+        confirmBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+    } else {
+        iconContainer.classList.add('bg-blue-100');
+        icon.classList.add('text-blue-600');
+        confirmBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
     }
+
+    confirmActionCallback = callback;
+    document.getElementById('actionConfirmModal').classList.remove('hidden');
+}
+
+function closeActionConfirmModal() {
+    document.getElementById('actionConfirmModal').classList.add('hidden');
+    confirmActionCallback = null;
+}
+
+document.getElementById('actionConfirmBtn').addEventListener('click', () => {
+    if (confirmActionCallback) {
+        confirmActionCallback();
+    }
+    closeActionConfirmModal();
+});
+
+async function updateOrderStatus(orderId, status) {
+    const colorClass = status === 'Approved' ? 'green' : 'red';
+
+    showConfirmModal(`Mark Order as ${status}`, `Are you sure you want to mark order #${orderId} as ${status}?`, colorClass, async () => {
+        try {
+            const res = await fetch(`${API_URL}/orders/${orderId}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ status })
+            });
+            if(res.ok) {
+                showAlert(`Order ${status} successfully.`);
+                closeOrderModal();
+                fetchOrders();
+                loadAnalytics(); // Refresh analytics
+            } else {
+                const data = await res.json();
+                throw new Error(data.error || 'Failed to update status');
+            }
+        } catch(err) {
+            showAlert(err.message || 'Failed to update order status', 'error');
+        }
+    });
 }
 
 // Transactions
@@ -470,41 +536,28 @@ form.addEventListener('submit', async (e) => {
 let productToDeleteId = null;
 
 function confirmDelete(id) {
-    productToDeleteId = id;
-    deleteModal.classList.remove('hidden');
-}
+    showConfirmModal('Delete Product', 'Are you sure you want to delete this product? This action cannot be undone.', 'red', async () => {
+        try {
+            const response = await fetch(`${API_URL}/products/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
 
-function closeDeleteModal() {
-    productToDeleteId = null;
-    deleteModal.classList.add('hidden');
-}
-
-document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
-    if (!productToDeleteId) return;
-
-    try {
-        const response = await fetch(`${API_URL}/products/${productToDeleteId}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${token}`
+            if (response.ok) {
+                showAlert('Product deleted successfully');
+                fetchItems();
+            } else {
+                const data = await response.json();
+                showAlert(data.error || 'Failed to delete product', 'error');
             }
-        });
-
-        if (response.ok) {
-            showAlert('Product deleted successfully');
-            closeDeleteModal();
-            fetchItems();
-        } else {
-            const data = await response.json();
-            showAlert(data.error || 'Failed to delete product', 'error');
-            closeDeleteModal();
+        } catch (error) {
+            console.error('Error deleting product:', error);
+            showAlert('Failed to delete product', 'error');
         }
-    } catch (error) {
-        console.error('Error deleting product:', error);
-        showAlert('Failed to delete product', 'error');
-        closeDeleteModal();
-    }
-});
+    });
+}
 
 // Initial Load
 loadAnalytics(); // Load default tab data

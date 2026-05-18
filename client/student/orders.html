@@ -21,20 +21,20 @@
     <nav class="header-gradient shadow-md text-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
-                <div class="flex items-center gap-3">
-                    <img src="../shared/assets/images/UC-logo.png" alt="UC Logo" class="h-10 w-auto bg-white p-1 rounded-full">
-                    <span class="font-bold text-xl tracking-wider">CheckList Store</span>
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <img src="../shared/assets/images/UC-logo.png" alt="UC Logo" class="h-8 sm:h-10 w-auto bg-white p-1 rounded-full">
+                    <span class="font-bold text-lg sm:text-xl tracking-wider hidden sm:block">CheckList Store</span>
                 </div>
-                <div class="flex items-center gap-6">
-                    <a href="store.html" class="hover:text-gray-300 font-medium">Store</a>
-                    <a href="orders.html" class="text-white font-bold border-b-2 border-white pb-1">My Orders</a>
+                <div class="flex items-center gap-4 sm:gap-6">
+                    <a href="store.html" class="hover:text-gray-300 font-medium text-sm sm:text-base">Store</a>
+                    <a href="orders.html" class="text-white font-bold border-b-2 border-white pb-1 text-sm sm:text-base">Orders</a>
 
                     <div class="relative">
                         <button onclick="toggleUserDropdown()" class="flex items-center gap-2 focus:outline-none hover:text-gray-300">
-                            <span id="userGreeting" class="font-medium text-sm hidden sm:block">Hello, Student</span>
-                            <i class="fa-solid fa-circle-user text-2xl"></i>
+                            <span id="userGreeting" class="font-medium text-sm hidden md:block">Hello, Student</span>
+                            <i class="fa-solid fa-circle-user text-xl sm:text-2xl"></i>
                         </button>
-                        <div id="userDropdownMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden border">
+                        <div id="userDropdownMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden border text-gray-800">
                             <a href="#" onclick="logout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                 <i class="fa-solid fa-right-from-bracket mr-2"></i>Sign out
                             </a>
