@@ -49,16 +49,16 @@
         <!-- Sidebar -->
         <aside class="w-64 bg-white shadow-lg fixed h-full z-10 border-r border-gray-100">
             <nav class="mt-8 px-4 space-y-2">
-                <a href="#" class="nav-link active flex items-center gap-3 px-4 py-3 text-gray-600 rounded-lg transition-colors" onclick="switchTab(\"analytics\", this)">
+                <a href="#" class="nav-link active flex items-center gap-3 px-4 py-3 text-gray-600 rounded-lg transition-colors" onclick="switchTab('analytics', this)">
                     <i class="fa-solid fa-chart-pie w-5"></i><span>Analytics</span>
                 </a>
-                <a href="#" class="nav-link flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-blue-900 hover:text-white rounded-lg transition-colors" onclick="switchTab(\"orders\", this)">
+                <a href="#" class="nav-link flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-blue-900 hover:text-white rounded-lg transition-colors" onclick="switchTab('orders', this)">
                     <i class="fa-solid fa-cart-arrow-down w-5"></i><span>Orders</span>
                 </a>
-                <a href="#" class="nav-link flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-blue-900 hover:text-white rounded-lg transition-colors" onclick="switchTab(\"inventory\", this)">
+                <a href="#" class="nav-link flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-blue-900 hover:text-white rounded-lg transition-colors" onclick="switchTab('inventory', this)">
                     <i class="fa-solid fa-box w-5"></i><span>Inventory</span>
                 </a>
-                <a href="#" class="nav-link flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-blue-900 hover:text-white rounded-lg transition-colors" onclick="switchTab(\"transactions\", this)">
+                <a href="#" class="nav-link flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-blue-900 hover:text-white rounded-lg transition-colors" onclick="switchTab('transactions', this)">
                     <i class="fa-solid fa-right-left w-5"></i><span>Transactions</span>
                 </a>
             </nav>
@@ -206,12 +206,7 @@
                             </div>
                             <div>
                                 <label for="itemCategory" class="block text-sm font-medium text-gray-700">Category</label>
-                                <select id="itemCategory" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md">
-                                    <option value="">Select Category</option>
-                                    <option value="CCS Merch">CCS Merch</option>
-                                    <option value="Uniforms">Uniforms</option>
-                                    <option value="Others">Others</option>
-                                </select>
+                                <input type="text" id="itemCategory" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Enter custom category">
                             </div>
                             <div>
                                 <label for="itemDesc" class="block text-sm font-medium text-gray-700">Description</label>

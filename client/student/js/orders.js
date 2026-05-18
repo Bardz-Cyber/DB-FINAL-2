@@ -28,6 +28,22 @@ function logout() {
     window.location.href = '../auth/login.html';
 }
 
+function toggleUserDropdown() {
+    const menu = document.getElementById('userDropdownMenu');
+    if (menu) {
+        menu.classList.toggle('hidden');
+    }
+}
+
+// Close dropdown if clicking outside
+document.addEventListener('click', function(event) {
+    const isClickInside = event.target.closest('.relative');
+    const menu = document.getElementById('userDropdownMenu');
+    if (menu && !isClickInside && !menu.classList.contains('hidden')) {
+        menu.classList.add('hidden');
+    }
+});
+
 function showAlert(message, type = 'success') {
     const alertEl = document.getElementById('alertMessage');
     alertEl.textContent = message;

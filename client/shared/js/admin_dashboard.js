@@ -5,7 +5,7 @@ const token = localStorage.getItem('checklist_token');
 const userStr = localStorage.getItem('checklist_user');
 
 if (!token || !userStr) {
-    window.location.href = 'login.html';
+    window.location.href = '../auth/login.html';
 }
 
 const user = JSON.parse(userStr);
@@ -138,7 +138,8 @@ function renderOrders(orders) {
         else if (order.status === 'Approved') statusBadge = '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Approved</span>';
         else statusBadge = '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Cancelled</span>';
 
-        const orderStr = encodeURIComponent(JSON.stringify(order));
+        // Escape single quotes for HTML attribute injection
+        const orderStr = encodeURIComponent(JSON.stringify(order)).replace(/'/g, "%27");
 
         tbody.innerHTML += `
             <tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="openOrderModal('${orderStr}')">
@@ -310,12 +311,9 @@ function openModal(itemStr = null) {
 
         // Select matching category option
         if (item.category) {
-            const select = document.getElementById('itemCategory');
-            Array.from(select.options).forEach(opt => {
-                 if (opt.value === item.category || opt.text === item.category) {
-                     select.value = opt.value;
-                 }
-            });
+            document.getElementById('itemCategory').value = item.category;
+        } else {
+            document.getElementById('itemCategory').value = '';
         }
     } else {
         modalTitle.textContent = 'Add New Product';
@@ -323,6 +321,7 @@ function openModal(itemStr = null) {
         document.getElementById('itemId').value = '';
         document.getElementById('itemPrice').value = '0.00';
         document.getElementById('itemQuantity').value = 0;
+        document.getElementById('itemCategory').value = '';
     }
 }
 

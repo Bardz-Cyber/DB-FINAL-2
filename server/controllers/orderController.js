@@ -17,6 +17,12 @@ exports.createOrder = async (req, res) => {
 
         // Fetch actual prices from the database
         for (const item of items) {
+            const qty = parseInt(item.quantity, 10);
+            if (isNaN(qty) || qty <= 0) {
+                 await connection.rollback();
+                 return res.status(400).json({ error: `Quantity must be a positive number for product ID ${item.product_id}` });
+            }
+
             const [productRows] = await connection.execute('SELECT price, quantity FROM products WHERE id = ?', [item.product_id]);
 
             if (productRows.length === 0) {
@@ -26,17 +32,17 @@ exports.createOrder = async (req, res) => {
 
             const product = productRows[0];
 
-            if (item.quantity > product.quantity) {
+            if (qty > product.quantity) {
                  await connection.rollback();
                  return res.status(400).json({ error: `Not enough stock for product ID ${item.product_id}` });
             }
 
             const price = parseFloat(product.price);
-            calculated_total_amount += (price * item.quantity);
+            calculated_total_amount += (price * qty);
 
             verifiedItems.push({
                 product_id: item.product_id,
-                quantity: item.quantity,
+                quantity: qty,
                 price: price
             });
         }

@@ -33,6 +33,22 @@ function logout() {
     window.location.href = '../auth/login.html';
 }
 
+function toggleUserDropdown() {
+    const menu = document.getElementById('userDropdownMenu');
+    if (menu) {
+        menu.classList.toggle('hidden');
+    }
+}
+
+// Close dropdown if clicking outside
+document.addEventListener('click', function(event) {
+    const isClickInside = event.target.closest('.relative');
+    const menu = document.getElementById('userDropdownMenu');
+    if (menu && !isClickInside && !menu.classList.contains('hidden')) {
+        menu.classList.add('hidden');
+    }
+});
+
 // UI Utilities
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
@@ -285,12 +301,34 @@ function updateCartUI() {
 
 // Modal handling
 function openCartModal() {
-    document.getElementById('cartModal').classList.remove('hidden');
+    const modal = document.getElementById('cartModal');
+    const overlay = document.getElementById('cartOverlay');
+    const panel = document.getElementById('cartPanel');
+
+    modal.classList.remove('hidden');
+    // Allow display:block to apply before triggering transition
+    setTimeout(() => {
+        overlay.classList.remove('opacity-0');
+        panel.classList.remove('translate-x-full');
+        panel.classList.add('translate-x-0');
+    }, 10);
+
     updateCartUI(); // Ensure fresh render
 }
 
 function closeCartModal() {
-    document.getElementById('cartModal').classList.add('hidden');
+    const modal = document.getElementById('cartModal');
+    const overlay = document.getElementById('cartOverlay');
+    const panel = document.getElementById('cartPanel');
+
+    overlay.classList.add('opacity-0');
+    panel.classList.remove('translate-x-0');
+    panel.classList.add('translate-x-full');
+
+    // Wait for transition to finish before hiding container
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
 }
 
 // Checkout
