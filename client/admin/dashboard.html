@@ -99,16 +99,18 @@
                         <div><p class="text-sm text-gray-500 font-medium">Total Products</p><p class="text-2xl font-bold text-gray-900" id="metric-products">0</p></div>
                     </div>
                 </div>
-                <div class="bg-white rounded-xl shadow p-6 mb-8 w-full max-w-4xl">
-                    <h2 class="text-lg font-bold text-gray-800 mb-4">Sales Over Time (Last 7 Days)</h2>
-                    <canvas id="salesChart" width="400" height="150"></canvas>
+                <div class="bg-white rounded-xl shadow p-6 mb-8 w-full max-w-2xl mx-auto flex flex-col items-center">
+                    <h2 class="text-lg font-bold text-gray-800 mb-4 self-start">Sales Breakdown (Last 7 Days)</h2>
+                    <div class="w-full max-w-md">
+                        <canvas id="salesChart" width="400" height="400"></canvas>
+                    </div>
                 </div>
             </div>
 
             <!-- ORDERS TAB -->
             <div id="orders-tab" class="tab-content">
                 <header class="mb-6"><h2 class="text-2xl font-bold text-gray-800">Orders</h2></header>
-                <div class="bg-white shadow overflow-hidden sm:rounded-lg overflow-x-auto">
+                <div class="bg-white shadow overflow-hidden sm:rounded-lg overflow-x-auto relative min-h-[200px]">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
@@ -148,6 +150,14 @@
                         </thead>
                         <tbody id="inventoryTableBody" class="bg-white divide-y divide-gray-200"></tbody>
                     </table>
+                    <div id="tableLoading" class="absolute inset-0 bg-white flex flex-col items-center justify-center z-10">
+                        <i class="fa-solid fa-spinner fa-spin text-3xl text-blue-800"></i>
+                        <p class="mt-2 text-gray-500">Loading products...</p>
+                    </div>
+                    <div id="tableEmpty" class="absolute inset-0 bg-white flex flex-col items-center justify-center z-10 hidden">
+                        <i class="fa-solid fa-box-open text-4xl text-gray-300 mb-3"></i>
+                        <p class="text-gray-500">No products found. Click "Add Product" to start.</p>
+                    </div>
                 </div>
             </div>
 

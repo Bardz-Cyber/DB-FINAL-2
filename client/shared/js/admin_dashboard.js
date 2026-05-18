@@ -87,27 +87,36 @@ function renderSalesChart(data) {
         salesChartInstance.destroy();
     }
 
-    const labels = data.map(d => new Date(d.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }));
+    const labels = data.map(d => d.category || 'Uncategorized');
     const totals = data.map(d => parseFloat(d.total));
 
     salesChartInstance = new Chart(ctx, {
-        type: 'line',
+        type: 'pie',
         data: {
             labels: labels.length ? labels : ['No Data'],
             datasets: [{
                 label: 'Total Sales (₱)',
                 data: totals.length ? totals : [0],
-                borderColor: '#000080',
-                backgroundColor: 'rgba(0, 0, 128, 0.1)',
-                borderWidth: 2,
-                fill: true,
-                tension: 0.3
+                backgroundColor: [
+                    'rgba(0, 0, 128, 0.8)', // Navy Blue
+                    'rgba(54, 162, 235, 0.8)', // Light Blue
+                    'rgba(255, 206, 86, 0.8)', // Yellow
+                    'rgba(75, 192, 192, 0.8)', // Teal
+                    'rgba(153, 102, 255, 0.8)', // Purple
+                    'rgba(255, 159, 64, 0.8)', // Orange
+                    'rgba(201, 203, 207, 0.8)' // Grey
+                ],
+                borderWidth: 1
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: { y: { beginAtZero: true } }
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                }
+            }
         }
     });
 }

@@ -14,13 +14,15 @@ exports.getAnalytics = async (req, res) => {
         const [totalProductsRow] = await db.execute("SELECT COUNT(*) as count FROM products");
         const totalProducts = totalProductsRow[0].count || 0;
 
-        // Sales Over Time (Last 7 Days)
-        const [salesOverTime] = await db.execute(`
-            SELECT DATE(created_at) as date, SUM(total_amount) as total
-            FROM orders
-            WHERE status = 'Approved' AND created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-            GROUP BY DATE(created_at)
-            ORDER BY DATE(created_at) ASC
+        // Sales Breakdown by Category (Last 7 Days)
+        const [salesByCategory] = await db.execute(`
+            SELECT p.category, SUM(oi.price_at_purchase * oi.quantity) as total
+            FROM order_items oi
+            JOIN orders o ON oi.order_id = o.id
+            JOIN products p ON oi.product_id = p.id
+            WHERE o.status = 'Approved' AND o.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+            GROUP BY p.category
+            ORDER BY total DESC
         `);
 
         // Recent Orders
@@ -39,7 +41,7 @@ exports.getAnalytics = async (req, res) => {
                 totalProducts
             },
             charts: {
-                salesOverTime
+                salesByCategory
             },
             recentOrders
         });
