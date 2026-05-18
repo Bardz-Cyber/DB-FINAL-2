@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheckList - My Orders</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .header-gradient { background: linear-gradient(90deg, #000080 0%, #00004d 100%); }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="header-gradient shadow-md text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <img src="../shared/assets/images/UC-logo.png" alt="UC Logo" class="h-10 w-auto bg-white p-1 rounded-full">
+                    <span class="font-bold text-xl tracking-wider">CheckList Store</span>
+                </div>
+                <div class="flex items-center gap-6">
+                    <a href="store.html" class="hover:text-gray-300 font-medium">Store</a>
+                    <a href="orders.html" class="text-white font-bold border-b-2 border-white pb-1">My Orders</a>
+
+                    <div class="relative group">
+                        <button class="flex items-center gap-2 focus:outline-none">
+                            <span id="userGreeting" class="font-medium text-sm hidden sm:block">Hello, Student</span>
+                            <i class="fa-solid fa-circle-user text-2xl"></i>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block border">
+                            <a href="#" onclick="logout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fa-solid fa-right-from-bracket mr-2"></i>Sign out
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">My Orders</h1>
+            <p class="text-gray-500 mt-1">View the status and history of your store purchases.</p>
+        </header>
+
+        <div id="alertMessage" class="hidden mb-4 p-4 rounded-lg text-sm font-medium shadow-sm"></div>
+
+        <div id="ordersContainer" class="space-y-6">
+            <div class="text-center py-10">
+                <i class="fa-solid fa-spinner fa-spin text-3xl text-blue-800"></i>
+                <p class="mt-2 text-gray-500">Loading your orders...</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="js/orders.js"></script>
+</body>
+</html>

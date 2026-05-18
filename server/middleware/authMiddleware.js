@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-module.exports = (req, res, next) => {
+const authMiddleware = (req, res, next) => {
     // Get token from header
     const token = req.header('Authorization');
 
@@ -23,4 +23,17 @@ module.exports = (req, res, next) => {
     } catch (error) {
         res.status(401).json({ error: 'Token is not valid' });
     }
+};
+
+const isAdmin = (req, res, next) => {
+    if (req.user && req.user.role === 'admin') {
+        next();
+    } else {
+        return res.status(403).json({ error: 'Access denied: Admins only' });
+    }
+};
+
+module.exports = {
+    authMiddleware,
+    isAdmin
 };

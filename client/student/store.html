@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheckList - Student Store</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; }
+        .header-gradient { background: linear-gradient(90deg, #000080 0%, #00004d 100%); }
+        .skeleton { animation: skeleton-loading 1s linear infinite alternate; }
+        @keyframes skeleton-loading {
+            0% { background-color: hsl(200, 20%, 80%); }
+            100% { background-color: hsl(200, 20%, 95%); }
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="header-gradient shadow-md text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <img src="../shared/assets/images/UC-logo.png" alt="UC Logo" class="h-10 w-auto bg-white p-1 rounded-full">
+                    <span class="font-bold text-xl tracking-wider">CheckList Store</span>
+                </div>
+                <div class="flex items-center gap-6">
+                    <a href="store.html" class="hover:text-gray-300 font-medium">Store</a>
+                    <a href="orders.html" class="hover:text-gray-300 font-medium">My Orders</a>
+
+                    <div class="relative cursor-pointer" onclick="openCartModal()">
+                        <i class="fa-solid fa-cart-shopping text-xl hover:text-gray-300"></i>
+                        <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full shadow-sm">0</span>
+                    </div>
+
+                    <div class="relative group">
+                        <button class="flex items-center gap-2 focus:outline-none">
+                            <span id="userGreeting" class="font-medium text-sm hidden sm:block">Hello, Student</span>
+                            <i class="fa-solid fa-circle-user text-2xl"></i>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block border">
+                            <a href="#" onclick="logout()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fa-solid fa-right-from-bracket mr-2"></i>Sign out
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Store Content -->
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+
+        <header class="mb-8 flex justify-between items-end">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">Products</h1>
+                <p class="text-gray-500 mt-1">Browse and purchase university merchandise and supplies.</p>
+            </div>
+        </header>
+
+        <!-- Search & Filter -->
+        <div class="mb-8 flex flex-col sm:flex-row gap-4 justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+            <div class="relative w-full sm:w-96">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="text" id="searchInput" placeholder="Search products..." class="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-800">
+            </div>
+            <div class="flex gap-2 overflow-x-auto w-full sm:w-auto" id="categoryFilters">
+                <button class="px-4 py-1.5 rounded-full bg-blue-800 text-white text-sm font-medium whitespace-nowrap" onclick="filterCategory('')">All</button>
+                <button class="px-4 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 text-sm font-medium whitespace-nowrap" onclick="filterCategory('CCS Merch')">CCS Merch</button>
+                <button class="px-4 py-1.5 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 text-sm font-medium whitespace-nowrap" onclick="filterCategory('Uniforms')">Uniforms</button>
+                <!-- Other categories will be static or generated -->
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Skeleton Loader injected via JS initially -->
+        </div>
+
+        <div id="emptyState" class="hidden text-center py-16 bg-white rounded-xl border border-gray-100 shadow-sm mt-6">
+            <i class="fa-solid fa-basket-shopping text-5xl text-gray-300 mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900">No products found</h3>
+            <p class="text-gray-500 mt-1">Try adjusting your search or filter.</p>
+        </div>
+
+    </main>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="fixed z-50 inset-0 hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
+        <div class="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeCartModal()"></div>
+        <div class="fixed inset-y-0 right-0 max-w-md w-full flex">
+            <div class="w-screen max-w-md flex flex-col bg-white shadow-xl">
+                <div class="flex-1 py-6 overflow-y-auto px-4 sm:px-6">
+                    <div class="flex items-start justify-between">
+                        <h2 class="text-lg font-medium text-gray-900" id="slide-over-title">Shopping Cart</h2>
+                        <div class="ml-3 h-7 flex items-center">
+                            <button type="button" class="-m-2 p-2 text-gray-400 hover:text-gray-500" onclick="closeCartModal()">
+                                <i class="fa-solid fa-xmark text-xl"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <div class="flow-root">
+                            <ul id="cartItemsList" role="list" class="-my-6 divide-y divide-gray-200">
+                                <!-- Cart items injected via JS -->
+                            </ul>
+
+                            <div id="emptyCartMessage" class="hidden text-center py-10">
+                                <i class="fa-solid fa-cart-arrow-down text-4xl text-gray-300 mb-3"></i>
+                                <p class="text-gray-500">Your cart is empty.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200 py-6 px-4 sm:px-6 bg-gray-50">
+                    <div class="flex justify-between text-base font-medium text-gray-900 mb-4">
+                        <p>Subtotal</p>
+                        <p id="cartTotal">₱0.00</p>
+                    </div>
+                    <div class="mt-6">
+                        <button id="checkoutBtn" onclick="checkout()" class="w-full flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-800 hover:bg-blue-900 disabled:opacity-50 disabled:cursor-not-allowed">
+                            Checkout
+                        </button>
+                    </div>
+                    <div class="mt-6 flex justify-center text-sm text-center text-gray-500">
+                        <p>
+                            or <button type="button" class="text-blue-800 font-medium hover:text-blue-900" onclick="closeCartModal()">Continue Shopping<span aria-hidden="true"> &rarr;</span></button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 transform translate-y-full opacity-0 transition-all duration-300 z-50 rounded-lg px-4 py-3 shadow-lg flex items-center gap-3">
+        <i id="toastIcon" class="fa-solid text-xl"></i>
+        <span id="toastMessage" class="font-medium"></span>
+    </div>
+
+    <script src="js/store.js"></script>
+</body>
+</html>
