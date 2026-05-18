@@ -73,7 +73,7 @@ async function loadAnalytics() {
         document.getElementById('metric-products').textContent = data.metrics.totalProducts;
 
         // Render Chart
-        renderSalesChart(data.charts.salesOverTime);
+        renderSalesChart(data.charts.salesByCategory);
     } catch (error) {
         console.error('Error loading analytics:', error);
     }

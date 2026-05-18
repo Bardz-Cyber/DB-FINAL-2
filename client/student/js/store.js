@@ -144,13 +144,18 @@ function renderProducts(products) {
                 <div class="flex justify-between items-start mb-1">
                     <h3 class="font-semibold text-gray-800 line-clamp-1" title="${product.name}">${product.name}</h3>
                 </div>
-                <p class="text-xs text-gray-500 mb-2">${product.category || 'Uncategorized'} | Stock: <span class="font-medium ${product.quantity < 5 ? 'text-red-500' : ''}">${product.quantity}</span></p>
+                <p class="text-xs text-gray-500 mb-2">${product.category || 'Uncategorized'}</p>
 
-                <div class="mt-auto pt-4 flex justify-between items-center border-t border-gray-50">
+                <div class="mt-auto pt-4 flex flex-col gap-2 border-t border-gray-50">
                     <span class="font-bold text-gray-900 text-lg">₱${parseFloat(product.price).toFixed(2)}</span>
-                    <button onclick="addToCart(${product.id})" class="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-800 font-medium hover:bg-blue-800 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed" ${isOutOfStock ? 'disabled' : ''}>
-                        <i class="fa-solid fa-cart-plus"></i> Add
-                    </button>
+                    <div class="flex gap-2">
+                        <button onclick="addToCart(${product.id})" class="flex-1 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-800 font-medium hover:bg-blue-800 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed" title="Add to Cart" ${isOutOfStock ? 'disabled' : ''}>
+                            <i class="fa-solid fa-cart-plus"></i>
+                        </button>
+                        <button onclick="buyNow(${product.id})" class="flex-1 px-3 py-1.5 rounded-lg bg-blue-800 text-white font-medium hover:bg-blue-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" ${isOutOfStock ? 'disabled' : ''}>
+                            Buy Now
+                        </button>
+                    </div>
                 </div>
             </div>
         `;
@@ -210,7 +215,12 @@ function saveCartToStorage() {
     updateCartUI();
 }
 
-function addToCart(productId) {
+function buyNow(productId) {
+    addToCart(productId, true); // true indicates silent add
+    openCartModal();
+}
+
+function addToCart(productId, silent = false) {
     const product = allProducts.find(p => p.id === productId);
     if (!product) return;
 
@@ -234,7 +244,9 @@ function addToCart(productId) {
     }
 
     saveCartToStorage();
-    showToast(`${product.name} added to cart`);
+    if (!silent) {
+        showToast(`${product.name} added to cart`);
+    }
 }
 
 function removeFromCart(productId) {
